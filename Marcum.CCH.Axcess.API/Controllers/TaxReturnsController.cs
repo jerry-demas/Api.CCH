@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Web;
 using Marcum.CCH.Axcess.API.Helpers;
@@ -10,7 +8,6 @@ using Marcum.CCH.Axcess.Infrastructure.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 
 
@@ -26,13 +23,12 @@ public class TaxReturnsController : Controller
     private readonly AuthorizationTokenOptions _authorizationTokenOptions;    
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TokenProvider _tokenProvider;
-
-    public TaxReturnsController(IConfiguration config, 
+    
+    public TaxReturnsController(IConfiguration config,
         ILogger<TaxReturnsController> logger,
         IOptions<CchSettingsOptions> cchSettingsOptions,
         IOptions<ProgramOptions> programOptions,
         IOptions<AuthorizationTokenOptions> authorizationTokenOptions,
-        IOptions<RPALoggingSettingsOptions> rpaLoggingSettingsOptions,
         IHttpClientFactory httpClientFactory,
         TokenProvider tokenProvider
         )
@@ -40,7 +36,7 @@ public class TaxReturnsController : Controller
         _logger = logger;
         _cchSettingsOptions = cchSettingsOptions.Value;
         _programOptions = programOptions.Value;
-        _authorizationTokenOptions = authorizationTokenOptions.Value;      
+        _authorizationTokenOptions = authorizationTokenOptions.Value;
         _httpClientFactory = httpClientFactory;
         _tokenProvider = tokenProvider;
         
@@ -102,7 +98,7 @@ public class TaxReturnsController : Controller
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
 
-                    var refreshResponse = System.Text.Json.JsonSerializer.Deserialize<CCHTokenRefreshResponse>(responseBody);
+                    var refreshResponse = System.Text.Json.JsonSerializer.Deserialize<CchTokenRefreshResponse>(responseBody);
 
                     if(refreshResponse is null ||  (string.IsNullOrEmpty(refreshResponse.access_token) || string.IsNullOrEmpty(refreshResponse.refresh_token)))
                         return "response is null";
@@ -187,6 +183,7 @@ public class TaxReturnsController : Controller
         }      
     }
 
+    [Authorize]
     [HttpGet(ApiEndPoints.TaxReturns.GetAuthorizationToken, Name = nameof(GetAuthorizationToken))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<OAuthTicket> GetAuthorizationToken()      
@@ -194,7 +191,7 @@ public class TaxReturnsController : Controller
 
     [HttpGet(ApiEndPoints.TaxReturns.GetCCHAuthorizationToken, Name = nameof(GetCCHAuthorizationToken))]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<string> GetCCHAuthorizationToken()
+    public Task<OAuthTicket> GetCCHAuthorizationToken()
     {        
         return Task.FromResult(_tokenProvider.CreateToken());
     }
@@ -204,10 +201,7 @@ public class TaxReturnsController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]    
     public async Task<IActionResult> GetElfStatusHistoryByReturnId(string returnId, CancellationToken cancellationToken)
-    {
-
-        
-       
+    {               
         try
         {                        
             OAuthTicket tokens = await EnsureValidAuthToken(cancellationToken);

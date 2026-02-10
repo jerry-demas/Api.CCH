@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CBIZ.SharedPackages.AzureKeyVaultConfiguration" Version="1.0.0.1" />
     <PackageReference Include="CBIZ.SharedPackages.Types" Version="4.0.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.23" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

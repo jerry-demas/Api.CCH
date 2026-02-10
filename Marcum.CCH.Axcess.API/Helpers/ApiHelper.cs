@@ -14,7 +14,7 @@ public static class ApiHelper
         string url,
         CancellationToken cancellationToken)
     {
-        switch (result.StatusCode)
+        switch (result.StatusCode) 
         {
             case HttpStatusCode.Unauthorized:
                 return new UnauthorizedObjectResult(

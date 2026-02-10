@@ -5,6 +5,10 @@ using Marcum.CCH.Axcess.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
+using CBIZ.SharedPackages;
+using Cbiz.SharedPackages;
+using Marcum.CCH.Axcess.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,21 +18,31 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth();
+builder.AddAzureKeyVaultAsConfig();
 builder.Services.AddProgramServices(builder.Configuration);
-
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(o =>
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<IOptions<AuthenticationOptions>>((jwtOptions, authOptions) =>
     {
-        o.RequireHttpsMetadata = false;
-        o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        jwtOptions.RequireHttpsMetadata = false;
+
+        jwtOptions.TokenValidationParameters = new TokenValidationParameters
         {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(authOptions.Value.SigningKey)
+            ),
+            ValidIssuer = authOptions.Value.Issuer,
+            ValidAudience = authOptions.Value.Audience,
             ClockSkew = TimeSpan.Zero
         };
     });
+
+
 
 builder.Services.AddSingleton<TokenProvider>();
 builder.Configuration.AddUserSecrets<TaxReturnsController>();

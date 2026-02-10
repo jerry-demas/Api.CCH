@@ -1,7 +1,7 @@
 ﻿
 namespace Marcum.CCH.Axcess.Domain.Models;
 
-public record CCHTokenRefreshResponse(
+public record CchTokenRefreshResponse(
     string id_token,
     string access_token,
     int expires_in,
