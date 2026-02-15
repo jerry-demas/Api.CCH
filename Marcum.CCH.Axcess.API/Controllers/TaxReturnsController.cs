@@ -444,19 +444,27 @@ public class TaxReturnsController : Controller
                         return BadRequest($"Could not downloadfile for ExecutionId={executionId} BatchItemGUIDS={batchItemGUID} FileName={fileName}");
 
                     }
-                    
-                    var baseDirectory = Path.Combine(AppContext.BaseDirectory, "Uploads");
-                    Directory.CreateDirectory(baseDirectory);
-                    var safeFileName = Path.GetFileName(fileName);
-                    var fullPath = Path.Combine(baseDirectory, safeFileName);
-                    var fullPathResolved = Path.GetFullPath(fullPath);
-                    if (!fullPathResolved.StartsWith(baseDirectory, StringComparison.OrdinalIgnoreCase)) throw new UnauthorizedAccessException("Invalid file path.");
-                    using (var stream = await result.Content.ReadAsStreamAsync(cancellationToken))
+
+                    var fullPathResolved = $"{Path.GetTempPath()}{Path.GetRandomFileName()}";
+                    try
+                    {
+
+                        using (var stream = await result.Content.ReadAsStreamAsync(cancellationToken))
                         using (var fileStream = new FileStream(fullPathResolved, FileMode.Create, FileAccess.Write, FileShare.None))
                             await stream.CopyToAsync(fileStream, cancellationToken);
 
-                    var fileBytes = await System.IO.File.ReadAllBytesAsync(fullPathResolved, cancellationToken);
-                    return File(fileBytes, "application/pdf", fullPathResolved);                                      
+                        var fileBytes = await System.IO.File.ReadAllBytesAsync(fullPathResolved, cancellationToken);
+                        return File(fileBytes, "application/pdf", fileName);
+                    }
+                    finally
+                    {
+
+                        if (System.IO.File.Exists(fullPathResolved))
+                        {
+                            System.IO.File.Delete(fullPathResolved);
+                        }
+                    }
+
                 }
             else
             {

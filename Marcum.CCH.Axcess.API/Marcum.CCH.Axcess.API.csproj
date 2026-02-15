@@ -26,4 +26,10 @@
     <ProjectReference Include="..\Marcum.CCH.Axcess.Infrastructure\Marcum.CCH.Axcess.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -9,6 +9,24 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marcum.CCH.Axcess.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marcum.CCH.Axcess.Domain", "Marcum.CCH.Axcess.Domain\Marcum.CCH.Axcess.Domain.csproj", "{AEF9AC36-3D12-4652-93FA-AF348341A97C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		azure-pipelines.yml = azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker-compose", "docker-compose", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose\docker-compose.yml = docker-compose\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "axcess", "axcess", "{3828761D-98D4-4B49-B201-762468DBFDEA}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose\axcess\docker-compose.dev.env = docker-compose\axcess\docker-compose.dev.env
+		docker-compose\axcess\docker-compose.prod.env = docker-compose\axcess\docker-compose.prod.env
+		docker-compose\axcess\docker-compose.uat.env = docker-compose\axcess\docker-compose.uat.env
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +48,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{3828761D-98D4-4B49-B201-762468DBFDEA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32184355-274D-475D-8C60-6AD2D3DC6567}
